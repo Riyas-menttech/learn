@@ -9,7 +9,19 @@ const app = express();
 app.use(express.json());
 
 
+// const contract = new web3.eth.Contract(abi);
 
+// contract.deploy({
+//     data: bytecode
+// }).send({
+//     from: '0x...', // address of the account deploying the contract
+//     gas: '4700000'
+// }).then(function(newContractInstance) {
+//     console.log(newContractInstance.options.address);
+// });
+
+// contract.methods.get().call()
+//   .then(console.log);
 
 class Block {
     constructor(index, timestamp, data, previousHash = '') {
@@ -26,6 +38,7 @@ class Block {
 
 class Blockchain {
     constructor() {
+        // console.log([this.createGenesisBlock()],'hello');
         this.chain = [this.createGenesisBlock()];
     }
 
@@ -63,7 +76,8 @@ class Blockchain {
 let blockchain = new Blockchain();
 
 app.post('/addData',(req,res)=>{
-    let data = req.body;
+    console.log(req.body,'b9ody');
+    let {data} = req.body;
     let newBlock = new Block(blockchain.getLatestBlock().index + 1, new Date(), data);
     blockchain.addBlock(newBlock);
     res.status(200).send("Data added successfully");
@@ -73,8 +87,12 @@ app.get('/getChain', (req, res) => {
     res.status(200).send(blockchain.chain);
 });
 
-
+app.get('/checkValid',(re,res)=>{
+    res.send(blockchain.isChainValid())
+})
+ 
 const PORT = 3000;
+//server
 app.listen(PORT,()=>{
     console.log(`Server started ${PORT}`);
 })
